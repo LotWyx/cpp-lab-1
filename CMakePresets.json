@@ -1,0 +1,102 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
+            "name": "default",
+            "displayName": "Сборка по умолчанию",
+            "description": "Сборка без дополнительных флагов",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "asan",
+            "displayName": "Сборка с AddressSanitizer",
+            "description": "Включение AddressSanitizer и LeakSanitizer",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "-fsanitize=address -fno-omit-frame-pointer",
+                "CMAKE_C_FLAGS": "-fsanitize=address -fno-omit-frame-pointer"
+            }
+        },
+        {
+            "name": "ubsan",
+            "displayName": "Сборка с UndefinedBehaviorSanitizer",
+            "description": "Включение UndefinedBehaviorSanitizer",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "-fsanitize=undefined -fno-omit-frame-pointer",
+                "CMAKE_C_FLAGS": "-fsanitize=undefined -fno-omit-frame-pointer"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "configurePreset": "default"
+        },
+        {
+            "name": "asan",
+            "configurePreset": "asan"
+        },
+        {
+            "name": "ubsan",
+            "configurePreset": "ubsan"
+        }
+    ],
+      "workflowPresets": [
+    {
+      "name": "default",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "default"
+        },
+        {
+          "type": "build",
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "name": "asan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "asan"
+        },
+        {
+          "type": "build",
+          "name": "asan"
+        }
+      ]
+    },
+    {
+      "name": "ubsan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ubsan"
+        },
+        {
+          "type": "build",
+          "name": "ubsan"
+        }
+      ]
+    }
+  ]
+}

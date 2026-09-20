@@ -1,0 +1,26 @@
+name: 'C++ CI'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [default, asan, ubsan]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Configure and build (${{ matrix.preset }})
+        run: cmake --workflow --preset ${{ matrix.preset }}
+
+      - name: Run program (${{ matrix.preset }})
+        run: ./build/${{ matrix.preset }}/app
