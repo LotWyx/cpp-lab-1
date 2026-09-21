@@ -18,7 +18,8 @@
             "description": "Сборка без дополнительных флагов",
             "inherits": "base",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "PATCH_VERSION": "$env{GITHUB_RUN_NUMBER}"
             }
         },
         {

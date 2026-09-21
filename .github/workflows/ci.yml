@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-check:
     runs-on: ubuntu-latest
+    permissions: write-all
     strategy:
       fail-fast: false
       matrix:
@@ -24,3 +25,31 @@ jobs:
 
       - name: Run program (${{ matrix.preset }})
         run: ./build/${{ matrix.preset }}/app
+
+      - name: Build .deb package (default only)
+        if: matrix.preset == 'default'
+        run: cmake --build --preset default --target package
+
+      - name: Create Release
+        if: matrix.preset == 'default'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        if: matrix.preset == 'default'
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/default/cpp-lab-1-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: cpp-lab-1-0.0.${{ github.run_number }}-Linux.deb
+          asset_content_type: application/vnd.debian.binary-package
